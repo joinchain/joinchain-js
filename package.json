@@ -1,0 +1,28 @@
+{
+  "name": "joinchain-account",
+  "version": "1.0.0",
+  "description": "js accounts for joinchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joinchain/joinchain-account.git"
+  },
+  "keywords": [
+    "joinchain",
+    "account"
+  ],
+  "author": "joinchain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joinchain/joinchain-account/issues"
+  },
+  "homepage": "https://github.com/joinchain/joinchain-account#readme",
+  "dependencies": {
+    "browserify": "^16.5.0",
+    "crypto": "^1.0.1",
+    "ecdh-crypto": "^1.0.5"
+  }
+}
