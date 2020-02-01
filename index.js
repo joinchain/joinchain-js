@@ -37,6 +37,16 @@ function LoadAccount(json) {
     return key;
 }
 
+// 导出公钥
+function ExportPublic(json) {
+    var privateKey = new ECDHCrypto(JSON.parse(json));
+    if(privateKey.isPrivateECDHCrypto){
+        var publicKey =  privateKey.asPublicECDHCrypto();
+        return JSON.stringify(publicKey, null, 2);
+    }
+    return null;
+}
+
 // 签名数据
 function SignData(data, privateKey) {
     var signature = privateKey.createSign('SHA256')
@@ -75,6 +85,7 @@ function VerifyData_crypto(data, publicKey) {
 module.exports = {
     NewAccount: NewAccount,
     LoadAccount: LoadAccount,
+    ExportPublic: ExportPublic,
     SignData: SignData,
     VerifyData, VerifyData
 };
