@@ -1,6 +1,6 @@
 "use strict";
-var crypto = require('crypto');
-const ECDHCrypto = require('ecdh-crypto');
+const ECDSA = require('ecdsa-secp256r1')
+const keccak256 = require('keccak256')
 
 /*
 * joinchain-account 是joinchain的账号nodejs接口。该接口提供账号的生成、加载功能
@@ -9,83 +9,69 @@ const ECDHCrypto = require('ecdh-crypto');
 
 // 创建新的账号
 function NewAccount() {
-    // 使用 crypto 模块创建的p256
-    // const { privateKey, publicKey } = crypto.generateKeyPairSync('ec',
-    //     {
-    //         namedCurve: 'P-256',
-    //         publicKeyEncoding: {
-    //             type: 'spki',
-    //             format: 'pem'
-    //         },
-    //         privateKeyEncoding: {
-    //             type: 'pkcs8',
-    //             format: 'pem'
-    //         }
-    //     }
-    // );
-    //var key = new ECDHCrypto(privateKey, 'pem');
-    
-    // 使用 Ecdh-crypto 创建的p256
-    // Create a new (random) ECDHCrypto instance using the secp521r1 curve
-    var key = ECDHCrypto.createECDHCrypto('P-256');
-    return JSON.stringify(key, null, 2);
+    const privateKey = ECDSA.generateKey()
+    return privateKey.toJWK()
 }
 
 // 加载账号
-function LoadAccount(json) {
-    var key = new ECDHCrypto(JSON.parse(json));
+function LoadAccount(jwk) {
+    var key = ECDSA.fromJWK(jwk)
     return key;
 }
 
 // 导出公钥
-function ExportPublic(json) {
-    var privateKey = new ECDHCrypto(JSON.parse(json));
-    if(privateKey.isPrivateECDHCrypto){
-        var publicKey =  privateKey.asPublicECDHCrypto();
-        return JSON.stringify(publicKey, null, 2);
+function ExportPublic(jwk) {
+    var key = ECDSA.fromJWK(jwk)
+    if(key.isPrivate){
+        var publicKey = key.asPublic();
+        return publicKey.toJWK();
     }
     return null;
 }
 
+// 获取私钥数据
+function GetPrivate(jwk) {
+    var key = ECDSA.fromJWK(jwk)
+    if(!key.isPrivate){
+        throw new Error('need a private key.');
+    }
+    return "0x" + key.d.toString("hex")
+}
+
+// 获取公钥数据
+function GetPublic(jwk) {
+    var key = ECDSA.fromJWK(jwk)
+    var buffer = Buffer.concat([key.x,key.y]);
+    return "0x"+buffer.toString("hex")
+}
+
+// 导出账号地址
+function GetAddress(jwk) {
+    var key = ECDSA.fromJWK(jwk)
+    var buffer = Buffer.concat([key.x,key.y]);
+    if (!Buffer.isBuffer(buffer)) {
+      throw new Error('this key must be a buffer object in order to get public key address');
+    }
+    return "0x" + keccak256(buffer).slice(12).toString('hex');
+}
+
 // 签名数据
 function SignData(data, privateKey) {
-    var signature = privateKey.createSign('SHA256')
-                   .update(data)
-                   .sign('base64');
+    const signature = privateKey.sign(data);
     return signature;
 }
 
 // 验证签名数据
 function VerifyData(data, signature, publicKey) {
-    return publicKey.createVerify('SHA256')
-        .update(data)
-        .verify(signature, 'base64');
-}
-
-// 签名，采用 crypto 模块
-function SignData_crypto(data, privateKey) {
-    const sign = crypto.createSign('SHA256');
-
-    sign.write(data);
-    sign.end();
-
-    const signature = sign.sign(privateKey, 'hex');
-    console.log(signature);
-    return signature;
-}
-
-// 验证签名，采用 crypto 模块
-function VerifyData_crypto(data, publicKey) {
-    const verify = crypto.createVerify('SHA256');
-    verify.write('some data to sign');
-    verify.end();
-    return verify.verify(publicKey, signature, 'hex');
+    return publicKey.verify(data, signature)
 }
 
 module.exports = {
     NewAccount: NewAccount,
     LoadAccount: LoadAccount,
-    ExportPublic: ExportPublic,
+    GetPrivate: GetPrivate,
+    GetPublic: GetPublic,
+    GetAddress: GetAddress,
     SignData: SignData,
     VerifyData, VerifyData
 };
