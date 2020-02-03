@@ -4,7 +4,7 @@ This project is a nodejs interface that provides client support for joinchain bl
 
 本项目包含以下内容：
 Joinchain package list
-1. joinchain.Account    joinchain 账号
+1. joinchain.Account    joinchain 账号 
 2. joinchain.Tx         joinchain 交易，离线签名
 3. joinchain.Keystore   joinchain 离线账号存储
 
