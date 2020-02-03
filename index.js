@@ -1,3 +1,9 @@
+/**
+ * Create, import, and export joinchain keys.
+ * @author YinSong (yinsong@joinchain.io)
+ * @author SunFeng (sunfeng@joinchain.io)
+ */
+
 "use strict";
 var ECDSA = require('ecdsa-secp256r1')
 var keccak256 = require('keccak256')
