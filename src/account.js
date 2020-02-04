@@ -262,4 +262,18 @@ Account.prototype.verify = function(data, signature, privateKey) {
 }
 
 
+Account.prototype.privateKeyToAccount = function(privateKey, ignoreLength) {
+    if (!privateKey.startsWith('0x')) {
+        privateKey = '0x' + privateKey;
+    }
+
+    // 64 hex characters + hex-prefix
+    if (!ignoreLength && privateKey.length !== 66) {
+        throw new Error("Private key must be 32 bytes long");
+    }
+
+    return this.loadAccount(privateKey);
+};
+
+
 module.exports = Account;
