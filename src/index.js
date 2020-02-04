@@ -10,7 +10,7 @@ var Joinchain = function Joinchain() {
     this.version = version;
 
     this.Account = new Account();
-   // this.Keystore = new Keystore();
+    this.Keystore = new Keystore();
    // this.Tx = new Tx();
 
     // // overwrite package setProvider
@@ -27,7 +27,8 @@ var Joinchain = function Joinchain() {
 };
 Joinchain.version = version;
 Joinchain.modules = {
-    Account: Account
+    Account: Account,
+    Keystore:Keystore
 };
 
 module.exports = Joinchain;
