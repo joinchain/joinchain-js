@@ -1,6 +1,6 @@
 'use strict';
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+//function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var util = require('./util');
 var fees = require('./params');
@@ -40,15 +40,16 @@ var N_DIV_2 = new BN('7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f4668
  * @param {Buffer} data.to to the to address
  * @param {Buffer} data.value the amount of ether sent
  * @param {Buffer} data.data this will contain the data of the message or the init of a contract
- * @param {Buffer} data.v EC signature parameter
- * @param {Buffer} data.r EC signature parameter
- * @param {Buffer} data.s EC recovery ID
- * @param {Number} data.chainId EIP 155 chainId - mainnet: 1, ropsten: 3
+
  * */
+// * @param {Buffer} data.v EC signature parameter
+//* @param {Buffer} data.r EC signature parameter
+// * @param {Buffer} data.s EC recovery ID
+// * @param {Number} data.chainId EIP 155 chainId - mainnet: 1, ropsten: 3
 
 var Transaction = function () {
   function Transaction(data) {
-    _classCallCheck(this, Transaction);
+    //_classCallCheck(this, Transaction);
 
     data = data || {};
     // Define Properties
@@ -58,12 +59,12 @@ var Transaction = function () {
       allowLess: true,
       default: new Buffer([])
     },{
-      name: 'nonce',
-      length: 32,
-      allowLess: true,
+      name: 'to',
+      allowZero: true,
+      length: 20,
       default: new Buffer([])
     }, {
-      name: 'gasPrice',
+      name: 'nonce',
       length: 32,
       allowLess: true,
       default: new Buffer([])
@@ -74,9 +75,9 @@ var Transaction = function () {
       allowLess: true,
       default: new Buffer([])
     }, {
-      name: 'to',
-      allowZero: true,
-      length: 20,
+      name: 'gasPrice',
+      length: 32,
+      allowLess: true,
       default: new Buffer([])
     }, {
       name: 'value',
@@ -84,8 +85,7 @@ var Transaction = function () {
       allowLess: true,
       default: new Buffer([])
     }, {
-      name: 'data',
-      alias: 'input',
+      name: 'input',
       allowZero: true,
       default: new Buffer([])
     }, {
@@ -100,23 +100,14 @@ var Transaction = function () {
       name: 'extra',
       allowZero: true,
       default: new Buffer([])
-    },{
-      name: 'r',
-      length: 32,
-      allowZero: true,
-      allowLess: true,
-      default: new Buffer([])
-    }, {
-      name: 's',
-      length: 32,
-      allowZero: true,
-      allowLess: true,
-      default: new Buffer([])
     }];
-
+    //console.log(this)
+    //console.log(fields)
+    //console.log(data)
     // 赋值字段 并序列化 attached serialize
     util.defineProperties(this, fields, data);
 
+    //console.log(this.raw)
     /**
      * @property {Buffer} from (read only) sender address of this transaction, mathematically derived from other parameters.
      * @name from
@@ -130,9 +121,9 @@ var Transaction = function () {
     // });
 
     // calculate chainId from signature
-    var sigV = util.bufferToInt(this.v);
-    var chainId = Math.floor((sigV - 35) / 2);
-    if (chainId < 0) chainId = 0;
+    //var sigV = util.bufferToInt(this.v);
+   // var chainId = Math.floor((sigV - 35) / 2);
+   // if (chainId < 0) chainId = 0;
 
     // set chainId
     //this._chainId = chainId || data.chainId || 0;
@@ -163,25 +154,26 @@ var Transaction = function () {
     // when computing the hash of a transaction for purposes of signing or recovering,
     // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
     // hash nine elements, with v replaced by CHAIN_ID, r = 0 and s = 0
-
+    //console.log(this.raw);
     var items = void 0;
-    if (includeSignature) {
-      items = this.raw;
-      console.log(items);
-    } else {
-      if (this._chainId > 0) {
-        var raw = this.raw.slice();
-        //this.v = this._chainId;
-        this.r = 0;
-        this.s = 0;
-        items = this.raw;
-        this.raw = raw;
-        console.log(222)
-      } else {
-        console.log(333);
-        items = this.raw.slice(0, 6);
-      }
-    }
+    // if (includeSignature) {
+    //   items = this.raw;
+    //   //console.log(items);
+    // } else {
+    //   if (this._chainId > 0) {
+    //     var raw = this.raw.slice();
+    //     //this.v = this._chainId;
+    //     this.r = 0;
+    //     this.s = 0;
+    //     items = this.raw;
+    //     this.raw = raw;
+    //     console.log(222)
+    //   } else {
+    //     console.log(333);
+    //     items = this.raw.slice(0, 6);
+    //   }
+    // }
+    items = this.raw;
 
     // create hash
     return util.rlphash(items);
@@ -262,23 +254,13 @@ var Transaction = function () {
 
   Transaction.prototype.sign = function sign(privateKey) {
     var msgHash = this.hash(true);
-    console.log(msgHash);
+    console.log(msgHash.toString("hex"));
     var sig = util.ecsign(msgHash, privateKey);
+    console.log("sign：" +  sig.toString("hex"))
     // if (this._chainId > 0) {
     //   sig.v += this._chainId * 2 + 8;
     // }
     Object.assign(this, sig);
-  };
-
-  Transaction.prototype.signNew = function sign(msgHash,privateKey) {
-    var msgHash = this.hash(true);
-    console.log(msgHash);
-    var sig = util.ecsign(msgHash, privateKey);
-    return sig;
-    // if (this._chainId > 0) {
-    //   sig.v += this._chainId * 2 + 8;
-    // }
-    //Object.assign(this, sig);
   };
 
   /**

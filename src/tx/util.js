@@ -376,17 +376,19 @@ exports.ecsign = function (msgHash, privateKey) {
       y: ecdh.getPublicKey().slice(Math.ceil(256 / 8) + 1)
   })
   var sig = privateECKey.sign(msgHash)
-  console.log("原内容hash :" + msgHash.toString("hex") + "\n")
-  console.log("sign后的签名："+ sig.toString("hex") + "\n");
+  //console.log("原内容hash :" + msgHash.toString("hex") + "\n")
+  //console.log("sign后的签名："+ sig.toString("hex") + "\n");
   //sig = Buffer.from(sig);
   //var sig = secp256k1.sign(msgHash, privateKey);
 
    var ret = {};
-   ret.r = sig.slice(0, 32);
-   console.log("r ：" + ret.r.toString("hex") +"\n")
-   ret.s = sig.slice(32, 64);
-   console.log("s ：" + ret.s.toString("hex") +"\n")
-   //ret.v = 0 + 27;
+   //ret.signature = sig;
+   var r = sig.slice(0, 32);
+   console.log("r ：" + r.toString("hex") +"\n")
+   var s = sig.slice(32, 64);
+   console.log("s ：" + s.toString("hex") +"\n")
+   var v = 0;
+   //ret.signature = r.toString("hex") + s.toString("hex") + v.toString("hex")
    return ret;
 };
 
@@ -661,6 +663,7 @@ exports.defineProperties = function (self, fields, data) {
   };
 
   self.serialize = function serialize() {
+    console.log(self.raw);
     return rlp.encode(self.raw);
   };
 

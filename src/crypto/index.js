@@ -156,7 +156,7 @@ ECDSA.prototype.sign = function sign(message, format = 'base64') {
   }
 
   if (!this.isPrivate) throw new Error('EC Private Key needed to sign')
-  const sign = crypto.createSign('sha256') // RSA works with EC keys, too RSA-SHA256
+  const sign = crypto.createSign('sha256') // RSA works with EC keys, too RSA-SHA256 keccak
   sign.write(message)
   sign.end()
   return removeDerEncoding(sign.sign(this.toPEM()))
