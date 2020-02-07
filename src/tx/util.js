@@ -3,8 +3,9 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var createKeccakHash = require('keccak256');
-//var secp256k1 = require('secp256k1');
+//var secp256r1 = require('secp256k1');
 var secp256k1 = require('../crypto/index');
+var secp256r1 = require('secp256r1')
 var crypto = require("crypto");
 var assert = require('assert');
 var rlp = require('rlp');
@@ -168,7 +169,11 @@ exports.toBuffer = function (v) {
       v = Buffer.from(v);
     } else if (typeof v === 'string') {
       if (exports.isHexString(v)) {
-        v = Buffer.from(exports.padToEven(exports.stripHexPrefix(v)), 'hex');
+        console.log(v)
+        //v = Buffer.from(exports.padToEven(exports.stripHexPrefix(v)), 'hex');
+        v = Buffer.from(exports.padToEven(exports.stripHexPrefix(v)),'hex');
+        //v = Buffer.from(v);
+        console.log(v)
       } else {
         v = Buffer.from(v);
       }
@@ -233,7 +238,7 @@ exports.toUnsigned = function (num) {
  * @return {Buffer}
  */
 exports.keccak = function (a, bits) {
-  a = exports.toBuffer(a);
+  //a = exports.toBuffer(a);
   if (!bits) bits = 256;
 
   return createKeccakHash(a);
@@ -288,6 +293,7 @@ exports.ripemd160 = function (a, padded) {
  * @return {Buffer}
  */
 exports.rlphash = function (a) {
+  console.log(rlp.encode(a))
   return exports.keccak(rlp.encode(a));
 };
 
@@ -375,21 +381,34 @@ exports.ecsign = function (msgHash, privateKey) {
       x: ecdh.getPublicKey().slice(1, Math.ceil(256 / 8) + 1),
       y: ecdh.getPublicKey().slice(Math.ceil(256 / 8) + 1)
   })
-  var sig = privateECKey.sign(msgHash)
+  //第一种方法
+  //var sig = privateECKey.sign(msgHash)
   //console.log("原内容hash :" + msgHash.toString("hex") + "\n")
   //console.log("sign后的签名："+ sig.toString("hex") + "\n");
   //sig = Buffer.from(sig);
+  //原方法
   //var sig = secp256k1.sign(msgHash, privateKey);
+ //第二种方法
+  var sig = secp256r1.sign(msgHash,ecdh.getPrivateKey())
 
    var ret = {};
    //ret.signature = sig;
-   var r = sig.slice(0, 32);
-   console.log("r ：" + r.toString("hex") +"\n")
-   var s = sig.slice(32, 64);
-   console.log("s ：" + s.toString("hex") +"\n")
-   var v = 0;
+   //第一种方法
+  //  var r = sig.slice(0, 32);
+  //  console.log("r ：" + r.toString("hex") +"\n")
+  //  var s = sig.slice(32, 64);
+  //  console.log("s ：" + s.toString("hex") +"\n")
+  //  var v = 0;
    //ret.signature = r.toString("hex") + s.toString("hex") + v.toString("hex")
-   return ret;
+
+  //第二种
+  var r = sig.signature.slice(0, 32);
+  var s = sig.signature.slice(32, 64);
+  var v = sig.recovery + 27;
+  const totalLength = r.length + s.length + v.length;
+  console.log(totalLength);
+  //ret.signature = Buffer.concat([ret.r,ret.s,ret.v],totalLength)
+  return ret;
 };
 
 /**
@@ -663,7 +682,7 @@ exports.defineProperties = function (self, fields, data) {
   };
 
   self.serialize = function serialize() {
-    console.log(self.raw);
+   // console.log(self.raw);
     return rlp.encode(self.raw);
   };
 
@@ -673,7 +692,9 @@ exports.defineProperties = function (self, fields, data) {
       return self.raw[i];
     }
     function setter(v) {
+      //console.log(v)
       v = exports.toBuffer(v);
+     // console.log(v)
 
       if (v.toString('hex') === '00' && !field.allowZero) {
         v = Buffer.allocUnsafe(0);

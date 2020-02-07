@@ -12,7 +12,7 @@ const ECDSA = require('./crypto/index')
 var Account = function Account(cryptoName = "prime256v1") {
     // 显示所有支持的算法
     //console.log(crypto.getCurves())
-    console.log(crypto.getHashes());
+    //console.log(crypto.getHashes());
     this.cryptoName = cryptoName;
     this.ecdh = crypto.createECDH(cryptoName)
 }

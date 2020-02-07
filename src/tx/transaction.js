@@ -95,11 +95,11 @@ var Transaction = function () {
     },{
       name: 'signature',
       allowZero: true,
-      default: new Buffer([])
+      default: ""
     },{
       name: 'extra',
       allowZero: true,
-      default: new Buffer([])
+      default: ""
     }];
     //console.log(this)
     //console.log(fields)
@@ -149,7 +149,7 @@ var Transaction = function () {
 
   Transaction.prototype.hash = function hash(includeSignature) {
     if (includeSignature === undefined) includeSignature = true;
-
+    console.log(this.raw);
     // EIP155 spec:
     // when computing the hash of a transaction for purposes of signing or recovering,
     // instead of hashing only the first six elements (ie. nonce, gasprice, startgas, to, value, data),
@@ -253,10 +253,12 @@ var Transaction = function () {
 
 
   Transaction.prototype.sign = function sign(privateKey) {
+  
     var msgHash = this.hash(true);
+    //return msgHash;
     console.log(msgHash.toString("hex"));
     var sig = util.ecsign(msgHash, privateKey);
-    console.log("sign：" +  sig.toString("hex"))
+    //console.log("sign：" +  sig.toString("hex"))
     // if (this._chainId > 0) {
     //   sig.v += this._chainId * 2 + 8;
     // }
