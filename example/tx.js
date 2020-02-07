@@ -1,15 +1,6 @@
 var Tx = require('../src/tx/transaction')
 var utils = require('../src/utils/utils')
-var Joinchain = require("../src/index");
 
-//实例化joinchain对象
-var joinchain = new Joinchain(new Joinchain.providers.HttpProvider("http://39.99.153.32:10001"));
- //组装数据
-var data = { "jsonrpc": "2.0", "method": "eth_accounts", "params": []}
-
-//send 方法使用
-var sendRes = joinchain.RequestManager.send(data);
-console.log("send方法结果：\n " + sendRes + '\n');
 var rawTx = {
     from:"0x147675caaafa721d4734884dbc0fe38a110b62ab",
     nonce: utils.toHex(0),

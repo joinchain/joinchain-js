@@ -21,7 +21,7 @@ Joinchain.Account.newAccount();
 // var address = Joinchain.Account.getAddress();
 // console.log("地址长度为 = " + address.length + '\n')
 // console.log("地址为 = " + address + '\n');
-privateKey = "9eed655b053eb6a9c8686d96986870de7ecdf189688241fbba272e7527e35683"
+privateKey = "8f6456270f38e9f7427857cf2f9c7ab6f65d0ea4a75455e30b923d386d73caf5"
 //第三方导入账户
 //Joinchain.Account.loadAccount(privateKey);
 ecdh = crypto.createECDH("prime256v1")
