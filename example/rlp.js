@@ -43,7 +43,7 @@ var from = "908f9918ffbb80f382af0ec4b50d56851d1436e8";
  //定义上链数据
  fromBuffer = Buffer.from("908f9918ffbb80f382af0ec4b50d56851d1436e8","hex")
  toBuffer = Buffer.from("908f9918ffbb80f382af0ec4b50d56851d1436e8","hex")
- nonceBuffer = Buffer.from("06","hex")
+ nonceBuffer = Buffer.from("07","hex")
  gasLimitBuffer = new BN(2000000)//Buffer.from(2000000,"hex")
  gasPriceBuffer = Buffer.from("0","hex")
  valueBuffer = Buffer.from("0","hex")
