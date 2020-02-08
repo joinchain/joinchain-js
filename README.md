@@ -6,20 +6,30 @@ This project is a js interface that provides client support for joinchain blockc
 
 本项目包含以下内容：
 Joinchain-js package list
-1. joinchain.Account    joinchain 账号 
-2. joinchain.Tx         joinchain 交易，离线签名
-3. joinchain.Keystore   joinchain 离线账号存储
+1. joinchain.Account        joinchain 账号 
+2. joinchain.HttpProvider   joinchain http提供商接口
+3. joinchain.Keystore       joinchain 离线账号存储
+
+## How to use
+1. Install this package
+```
+npm install joinchain-js
+```
+2. Usage and Example
+```
+cd example
+node *.js
+```
 
 ## joinchain.Account
 The nodejs account interface for joinchain and is included in the joinchain-js package.
 
 - [快速上手](docs/account.md)
 
+## joinchain.HttpProvider
 
-## joinchain-tx
+- [快速上手](docs/httpprovider.md)
 
-- [快速上手](docs/transation.md)
-
-## joinchain-keystore
+## joinchain.keystore
 
 - [快速上手](docs/keystore.md)
