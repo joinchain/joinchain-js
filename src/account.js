@@ -1,10 +1,10 @@
 "use strict";
 
 var crypto = require("crypto");
-var keccak256 = require('keccak256')
+var keccak256 = require('keccak256');
 var asn1 = require('asn1.js');
 var BN = require('bn.js');
-const ECDSA = require('ecdsa-secp256r1')
+const ECDSA = require('./crypto/index')
 
 /**
  * 相当于定义类并且可以实现构造函数
@@ -12,6 +12,7 @@ const ECDSA = require('ecdsa-secp256r1')
 var Account = function Account(cryptoName = "prime256v1") {
     // 显示所有支持的算法
     //console.log(crypto.getCurves())
+    //console.log(crypto.getHashes());
     this.cryptoName = cryptoName;
     this.ecdh = crypto.createECDH(cryptoName)
 }
