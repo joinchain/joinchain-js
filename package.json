@@ -1,25 +1,25 @@
 {
-  "name": "joinchain-account",
-  "version": "1.0.2",
-  "description": "js accounts for joinchain",
+  "name": "joinchain-js",
+  "version": "1.0.1",
+  "description": "nodejs for joinchain",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joinchain/joinchain-account.git"
+    "url": "git+https://github.com/joinchain/joinchain-js.git"
   },
   "keywords": [
     "joinchain",
-    "account"
+    "nodejs"
   ],
   "author": "joinchain",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joinchain/joinchain-account/issues"
+    "url": "https://github.com/joinchain/joinchain-js/issues"
   },
-  "homepage": "https://github.com/joinchain/joinchain-account#readme",
+  "homepage": "https://github.com/joinchain/joinchain-js#readme",
   "dependencies": {
     "@web3-js/scrypt-shim": "^0.1.0",
     "asn1.js": "^5.3.0",
