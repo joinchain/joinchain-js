@@ -13,16 +13,17 @@ var RequestManager = function RequestManager(provider) {
  * Should be used to synchronously send request
  *
  * @method send
- * @param {Object} data
+ * @param {string} data
+ * @param {any} params
  * @return {Object}
  */
-RequestManager.prototype.send = function (data) {
+RequestManager.prototype.send = function (method,params) {
     if (!this.provider) {
         console.error(errors.InvalidProvider());
         return null;
     }
 
-    var payload = Jsonrpc.toPayload(data.method, data.params);
+    var payload = Jsonrpc.toPayload(method, params);
     var result = this.provider.send(payload);
 
     if (!Jsonrpc.isValidResponse(result)) {

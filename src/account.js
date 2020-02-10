@@ -4,7 +4,6 @@ var crypto = require("crypto");
 var keccak256 = require('keccak256');
 var asn1 = require('asn1.js');
 var BN = require('bn.js');
-const ECDSA = require('./crypto/index')
 
 const curveLength = Math.ceil(256 / 8) /* Byte length for validation */
 
@@ -112,10 +111,6 @@ Account.prototype.fromCompressedPublicKey = function (compressedKey, format = 'b
     this.x = keyBuffer.slice(1, curveLength + 1);
     this.y = keyBuffer.slice(curveLength + 1)
     return this.ecdh;
-    // return new ECDSA({
-    //   x: keyBuffer.slice(1, curveLength + 1),
-    //   y: keyBuffer.slice(curveLength + 1)
-    // })
   }
 
   Account.prototype.toCompressedPublicKey = function(format = 'base64') {
@@ -145,156 +140,6 @@ Account.prototype.getAddress = function() {
     
     // return "0x" + keccak256(publicKey).slice(12).toString('hex');
 }
-
-function toOIDArray(oid) {
-    return oid.split('.').map(function(s) {
-      return parseInt(s, 10)
-    });
-  }
-
-/**
- * 签名数据（未启用）
- * 
- * @method signData
- * @param data
- * @param privateKey
- * @return 
- */
-Account.prototype.signData = function(data,privateKey) {
-    //console.log(this.cryptoName);
-    var sign = crypto.createSign("sha256");
-    var ecdh = this.loadAccount(privateKey);
-    var ECPrivateKey = asn1.define('ECPrivateKey', function () {
-        this.seq().obj(
-            this.key('version').int(),
-            this.key('privateKey').octstr(),
-            this.key('parameters').optional().explicit(0).objid({
-              '1 2 840 10045 3 1 7' : 'prime256v1'
-            //   '1 3 132 0 10'        : 'secp256k1',
-            //   '1 3 132 0 34'        : 'secp384r1',
-            //   '1 3 132 0 35'        : 'secp521r1'
-            }),
-            this.key('publicKey').explicit(1).bitstr().optional()
-        );
-    });
-    var pemKey = ECPrivateKey.encode({
-        version: new BN(1),
-        privateKey: ecdh.getPrivateKey(),
-        parameters: toOIDArray('1.2.840.10045.3.1.7')//'prime256v1'
-    }, 'pem', { label: 'EC PRIVATE KEY' });
-    console.log(pemKey);
-    // var ECPrivateKey = asn1.define('ECPrivateKey', function() {
-    //     this.seq().obj(
-    //       this.key('version').int(),
-    //       this.key('privateKey').octstr(),
-    //       this.key('parameters').explicit(0).objid().optional(),
-    //       this.key('publicKey').explicit(1).bitstr().optional()
-    //     );
-    //   });
-    // var pemKey = ECPrivateKey.encode({
-    //     version: new BN(1),
-    //     privateKey: ecdh.getPrivateKey(),
-    //     // OID for brainpoolP512t1
-    //     parameters: toOIDArray('1.3.36.3.3.2.8.1.1.14')
-    //   }, 'pem', { label: 'EC PRIVATE KEY' });
-    
-    sign.update(data);
-    return sign.sign(pemKey, 'hex');
-}
-
-/**
- * 验证签名数据(未启用)
- * 
- * @method signData
- * @param data
- * @param signature
- * @param publicKey
- * @return 
- */
-Account.prototype.verifyData = function(data, signature, privateKey) {
-    const verify = crypto.createVerify("sha256");
-    var ecdh = this.loadAccount(privateKey);
-    var ECPublicKey = asn1.define('ECPublicKey', function () {
-        this.seq().obj(
-            this.key('algorithmIdentifier').seq().obj(
-              this.key('publicKeyType').objid({
-                '1 2 840 10045 2 1': 'EC'
-              }),
-              this.key('parameters').objid({
-                '1 2 840 10045 3 1 7' : 'prime256v1'
-                // '1 3 132 0 10'        : 'secp256k1',
-                // '1 3 132 0 34'        : 'secp384r1',
-                // '1 3 132 0 35'        : 'secp521r1'
-              })
-            ),
-            this.key('publicKey').bitstr()
-        );
-    });
-    var pemPubKey = ECPublicKey.encode({
-        algorithmIdentifier: {
-          publicKeyType: 'EC',
-          parameters: toOIDArray('1.2.840.10045.3.1.7')//'prime256v1'
-        },
-        publicKey: { data: ecdh.getPublicKey()}
-      }, 'pem', { label: 'PUBLIC KEY'} )
-      console.log(pemPubKey);
-    // var ECPublicKey = asn1.define('ECPublicKey', function() {
-    //     this.seq().obj(
-    //       this.key('version').int(),
-    //       this.key('privateKey').octstr(),
-    //       this.key('parameters').explicit(0).objid().optional(),
-    //       this.key('publicKey').explicit(1).bitstr().optional()
-    //     );
-    //   });
-    // var pemKey = ECPrivateKey.encode({
-    //     version: new BN(1),
-    //     publicKey: ecdh.getPublicKey(),
-    //     // OID for brainpoolP512t1
-    //     parameters: toOIDArray('1.3.36.3.3.2.8.1.1.14')
-    //   }, 'pem', { label: 'EC PRIVATE KEY' });
-    verify.update(data);
-    return verify.verify(pemPubKey, signature)
-    //console.log(verify.verify(publicKey, signature));
-}
-
-/**
- * 签名数据
- * 
- * @method signData
- * @param data
- * @param privateKey
- * @return 
- */
-Account.prototype.sign = function(data,privateKey) {
-    this.loadAccount(privateKey);
-    var privateECKey = new ECDSA({
-        d: this.ecdh.getPrivateKey(),
-        x: this.ecdh.getPublicKey().slice(1, Math.ceil(256 / 8) + 1),
-        y: this.ecdh.getPublicKey().slice(Math.ceil(256 / 8) + 1)
-    })
-    var signature = privateECKey.sign(data)
-    return signature;
-    
-}
-/**
- * 签名数据
- * 
- * @method signData
- * @param data
-* @param signature
- * @param privateKey
- * @return 
- */
-Account.prototype.verify = function(data, signature, privateKey) {
-    this.loadAccount(privateKey);
-    var publicKey = new ECDSA({
-        x: this.ecdh.getPublicKey().slice(1, Math.ceil(256 / 8) + 1),
-        y: this.ecdh.getPublicKey().slice(Math.ceil(256 / 8) + 1)
-    });
-    var result = publicKey.verify(data, signature);
-    return result;
-}
-
 
 Account.prototype.privateKeyToAccount = function(privateKey, ignoreLength) {
     if (!privateKey.startsWith('0x')) {

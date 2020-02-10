@@ -1,31 +1,3 @@
-/*
-    This file is part of web3.js.
-
-    web3.js is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    web3.js is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
-*/
-/**
- * @file utils.js
- * @author Marek Kotewicz <marek@ethdev.com>
- * @date 2015
- */
-
-/**
- * Utils
- *
- * @module utils
- */
-
 /**
  * Utility functions
  *
@@ -37,6 +9,8 @@
 var BigNumber = require('bignumber.js');
 var sha3 = require('./sha3.js');
 var utf8 = require('utf8');
+var rlp = require('rlp');
+var createKeccakHash = require('keccak256');
 
 var unitMap = {
     'noether':      '0',
@@ -67,6 +41,34 @@ var unitMap = {
     'gether':       '1000000000000000000000000000',
     'tether':       '1000000000000000000000000000000'
 };
+
+/**
+ * rlp encode
+ */
+var rlpEncode = function(data) {
+    return rlp.encode(data);
+}
+/**
+ * Creates SHA-3 hash of the RLP encoded version of the input
+ * @param {Buffer|Array|String|Number} a the input data
+ * @return {Buffer}
+ */
+var rlphash = function (a) {
+    return exports.keccak(rlp.encode(a));
+};
+/**
+ * Creates Keccak hash of the input
+ * @param {Buffer|Array|String|Number} a the input data
+ * @param {Number} [bits=256] the Keccak width
+ * @return {Buffer}
+ */
+exports.keccak = function (a, bits) {
+    //a = exports.toBuffer(a);
+    if (!bits) bits = 256;
+  
+    return createKeccakHash(a);
+};
+  
 
 /**
  * Should be called to pad string to expected length
@@ -639,4 +641,6 @@ module.exports = {
     isJson: isJson,
     isBloom: isBloom,
     isTopic: isTopic,
+    rlpEncode: rlpEncode,
+    rlphash: rlphash
 };

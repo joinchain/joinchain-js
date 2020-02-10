@@ -1,7 +1,4 @@
 var joinchain = require('../src/index');
-var  ECDSA = require('../src/crypto/index')
-var crypto = require("crypto");
-var keccak256 = require('keccak256');
 //实例化Joinchain对象
 var Joinchain = new joinchain();
 //创建账号
