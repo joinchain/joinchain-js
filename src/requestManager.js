@@ -1,4 +1,5 @@
 "use strict";
+
 var Jsonrpc = require("./jsonrpc/jsonrpc");
 var errors = require("./http/errors");
 //var httpProvider = require('./http/httpprovider')

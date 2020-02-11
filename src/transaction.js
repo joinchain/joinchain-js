@@ -1,4 +1,5 @@
 'use strict';
+
 var BN = require('bn.js');
 var utils = require("./utils/utils")
 var secp256r1 = require('secp256r1')
@@ -85,7 +86,6 @@ Transation.prototype.rlpHash = function(data){
             }else{
                     param[i] = Buffer.from(data[field.name],"hex"); 
             }
-            console.log("name为：" + field.name + " 值为：" + data[field.name] + "\n");
             
         }
     })

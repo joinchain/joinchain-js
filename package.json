@@ -1,6 +1,6 @@
 {
   "name": "joinchain-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "nodejs for joinchain",
   "main": "src/index.js",
   "scripts": {
@@ -12,16 +12,17 @@
   },
   "keywords": [
     "joinchain",
-    "nodejs"
+    "nodejs",
+    "secp256r1"
   ],
   "author": "joinchain",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/joinchain/joinchain-js/issues"
   },
   "homepage": "https://github.com/joinchain/joinchain-js#readme",
   "dependencies": {
-    "secp256r1": "0.0.3",
+    "@web3-js/scrypt-shim": "^0.1.0",
     "asn1.js": "^5.3.0",
     "bignumber.js": "^9.0.0",
     "bn.js": "^5.1.1",
@@ -29,11 +30,11 @@
     "keccak256": "^1.0.0",
     "rlp": "^2.2.4",
     "scrypt": "^6.0.3",
+    "secp256r1": "0.0.3",
     "underscore": "1.9.1",
     "utf8": "^3.0.0",
     "uuid": "^3.4.0",
     "web3-utils": "1.2.6",
-    "@web3-js/scrypt-shim": "^0.1.0",
     "xhr2-cookies": "^1.1.0",
     "xmlhttprequest": "^1.8.0"
   }
