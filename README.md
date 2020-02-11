@@ -39,4 +39,3 @@ var joinchain = new Joinchain(new Joinchain.providers.HttpProvider("http://127.0
 -[more account usage](docs/account.md)
 -[more keystore usage](docs/keystore.md)
 -[more transaction-sign usage](docs/transaction.md)
--[more joinchain-rpc usage](docs/rpc.md)
