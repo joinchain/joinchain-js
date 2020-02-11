@@ -3,7 +3,7 @@
 var version = require('../package.json').version;
 var Account = require('./account')
 var Keystore = require('./keystore')
-//var Tx = require('./transaction')
+var Transation = require('./transaction')
 var RequestManager = require('./requestManager')
 var HttpProvider = require('./http/httpprovider');
 
@@ -12,13 +12,12 @@ var Joinchain = function Joinchain(provider) {
     this.version = version;
     this.currentProvider = provider;
     this.Account = new Account();
+    this.Transation = new Transation();
     this.Keystore = new Keystore();
     this.RequestManager = new RequestManager(provider);
     this.providers = {
         HttpProvider: HttpProvider
     };
-   // this.Tx = new Tx();
-
 };
 Joinchain.version = version;
 Joinchain.providers = {
@@ -37,7 +36,8 @@ Joinchain.modules = {
     Account:    Account,
     Keystore:   Keystore,
     HttpProvider:    HttpProvider,
-    RequestManager: RequestManager
+    RequestManager: RequestManager,
+    Transation: Transation
 };
 
 module.exports = Joinchain;

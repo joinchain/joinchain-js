@@ -1,72 +1,37 @@
-/*
-    This file is part of web3.js.
-
-    web3.js is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    web3.js is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with web3.js.  If not, see <http://www.gnu.org/licenses/>.
-*/
-/**
- * @file utils.js
- * @author Marek Kotewicz <marek@ethdev.com>
- * @date 2015
- */
-
-/**
- * Utils
- *
- * @module utils
- */
-
-/**
- * Utility functions
- *
- * @class [utils] utils
- * @constructor
- */
-
+"use strict";
 
 var BigNumber = require('bignumber.js');
 var sha3 = require('./sha3.js');
 var utf8 = require('utf8');
-
-var unitMap = {
-    'noether':      '0',
-    'wei':          '1',
-    'kwei':         '1000',
-    'Kwei':         '1000',
-    'babbage':      '1000',
-    'femtoether':   '1000',
-    'mwei':         '1000000',
-    'Mwei':         '1000000',
-    'lovelace':     '1000000',
-    'picoether':    '1000000',
-    'gwei':         '1000000000',
-    'Gwei':         '1000000000',
-    'shannon':      '1000000000',
-    'nanoether':    '1000000000',
-    'nano':         '1000000000',
-    'szabo':        '1000000000000',
-    'microether':   '1000000000000',
-    'micro':        '1000000000000',
-    'finney':       '1000000000000000',
-    'milliether':   '1000000000000000',
-    'milli':        '1000000000000000',
-    'ether':        '1000000000000000000',
-    'kether':       '1000000000000000000000',
-    'grand':        '1000000000000000000000',
-    'mether':       '1000000000000000000000000',
-    'gether':       '1000000000000000000000000000',
-    'tether':       '1000000000000000000000000000000'
+var rlp = require('rlp');
+var createKeccakHash = require('keccak256');
+/**
+ * rlp encode
+ */
+var rlpEncode = function(data) {
+    return rlp.encode(data);
+}
+/**
+ * Creates SHA-3 hash of the RLP encoded version of the input
+ * @param {Buffer|Array|String|Number} a the input data
+ * @return {Buffer}
+ */
+var rlphash = function (a) {
+    return exports.keccak(rlp.encode(a));
 };
+/**
+ * Creates Keccak hash of the input
+ * @param {Buffer|Array|String|Number} a the input data
+ * @param {Number} [bits=256] the Keccak width
+ * @return {Buffer}
+ */
+exports.keccak = function (a, bits) {
+    //a = exports.toBuffer(a);
+    if (!bits) bits = 256;
+  
+    return createKeccakHash(a);
+};
+  
 
 /**
  * Should be called to pad string to expected length
@@ -290,77 +255,6 @@ var toHex = function (val) {
 };
 
 /**
- * Returns value of unit in Wei
- *
- * @method getValueOfUnit
- * @param {String} unit the unit to convert to, default ether
- * @returns {BigNumber} value of the unit (in Wei)
- * @throws error if the unit is not correct:w
- */
-var getValueOfUnit = function (unit) {
-    unit = unit ? unit.toLowerCase() : 'ether';
-    var unitValue = unitMap[unit];
-    if (unitValue === undefined) {
-        throw new Error('This unit doesn\'t exists, please use the one of the following units' + JSON.stringify(unitMap, null, 2));
-    }
-    return new BigNumber(unitValue, 10);
-};
-
-/**
- * Takes a number of wei and converts it to any other ether unit.
- *
- * Possible units are:
- *   SI Short   SI Full        Effigy       Other
- * - kwei       femtoether     babbage
- * - mwei       picoether      lovelace
- * - gwei       nanoether      shannon      nano
- * - --         microether     szabo        micro
- * - --         milliether     finney       milli
- * - ether      --             --
- * - kether                    --           grand
- * - mether
- * - gether
- * - tether
- *
- * @method fromWei
- * @param {Number|String} number can be a number, number string or a HEX of a decimal
- * @param {String} unit the unit to convert to, default ether
- * @return {String|Object} When given a BigNumber object it returns one as well, otherwise a number
-*/
-var fromWei = function(number, unit) {
-    var returnValue = toBigNumber(number).dividedBy(getValueOfUnit(unit));
-
-    return isBigNumber(number) ? returnValue : returnValue.toString(10);
-};
-
-/**
- * Takes a number of a unit and converts it to wei.
- *
- * Possible units are:
- *   SI Short   SI Full        Effigy       Other
- * - kwei       femtoether     babbage
- * - mwei       picoether      lovelace
- * - gwei       nanoether      shannon      nano
- * - --         microether     szabo        micro
- * - --         milliether     finney       milli
- * - ether      --             --
- * - kether                    --           grand
- * - mether
- * - gether
- * - tether
- *
- * @method toWei
- * @param {Number|String|BigNumber} number can be a number, number string or a HEX of a decimal
- * @param {String} unit the unit to convert from, default ether
- * @return {String|Object} When given a BigNumber object it returns one as well, otherwise a number
-*/
-var toWei = function(number, unit) {
-    var returnValue = toBigNumber(number).times(getValueOfUnit(unit));
-
-    return isBigNumber(number) ? returnValue : returnValue.toString(10);
-};
-
-/**
  * Takes an input and transforms it into an bignumber
  *
  * @method toBigNumber
@@ -447,52 +341,6 @@ var isChecksumAddress = function (address) {
     return true;
 };
 
-
-
-/**
- * Makes a checksum address
- *
- * @method toChecksumAddress
- * @param {String} address the given HEX adress
- * @return {String}
-*/
-var toChecksumAddress = function (address) {
-    if (typeof address === 'undefined') return '';
-
-    address = address.toLowerCase().replace('0x','');
-    var addressHash = sha3(address);
-    var checksumAddress = '0x';
-
-    for (var i = 0; i < address.length; i++ ) {
-        // If ith character is 9 to f then make it uppercase
-        if (parseInt(addressHash[i], 16) > 7) {
-          checksumAddress += address[i].toUpperCase();
-        } else {
-            checksumAddress += address[i];
-        }
-    }
-    return checksumAddress;
-};
-
-/**
- * Transforms given string to valid 20 bytes-length addres with 0x prefix
- *
- * @method toAddress
- * @param {String} address
- * @return {String} formatted address
- */
-var toAddress = function (address) {
-    if (isStrictAddress(address)) {
-        return address;
-    }
-
-    if (/^[0-9a-f]{40}$/.test(address)) {
-        return '0x' + address;
-    }
-
-    return '0x' + padLeft(toHex(address).substr(2), 40);
-};
-
 /**
  * Returns true if object is BigNumber, otherwise false
  *
@@ -576,38 +424,6 @@ var isJson = function (str) {
     }
 };
 
-/**
- * Returns true if given string is a valid Ethereum block header bloom.
- *
- * @method isBloom
- * @param {String} hex encoded bloom filter
- * @return {Boolean}
- */
-var isBloom = function (bloom) {
-    if (!/^(0x)?[0-9a-f]{512}$/i.test(bloom)) {
-        return false;
-    } else if (/^(0x)?[0-9a-f]{512}$/.test(bloom) || /^(0x)?[0-9A-F]{512}$/.test(bloom)) {
-        return true;
-    }
-    return false;
-};
-
-/**
- * Returns true if given string is a valid log topic.
- *
- * @method isTopic
- * @param {String} hex encoded topic
- * @return {Boolean}
- */
-var isTopic = function (topic) {
-    if (!/^(0x)?[0-9a-f]{64}$/i.test(topic)) {
-        return false;
-    } else if (/^(0x)?[0-9a-f]{64}$/.test(topic) || /^(0x)?[0-9A-F]{64}$/.test(topic)) {
-        return true;
-    }
-    return false;
-};
-
 module.exports = {
     padLeft: padLeft,
     padRight: padRight,
@@ -621,22 +437,18 @@ module.exports = {
     transformToFullName: transformToFullName,
     extractDisplayName: extractDisplayName,
     extractTypeName: extractTypeName,
-    toWei: toWei,
-    fromWei: fromWei,
     toBigNumber: toBigNumber,
     toTwosComplement: toTwosComplement,
-    toAddress: toAddress,
     isBigNumber: isBigNumber,
     isStrictAddress: isStrictAddress,
     isAddress: isAddress,
     isChecksumAddress: isChecksumAddress,
-    toChecksumAddress: toChecksumAddress,
     isFunction: isFunction,
     isString: isString,
     isObject: isObject,
     isBoolean: isBoolean,
     isArray: isArray,
     isJson: isJson,
-    isBloom: isBloom,
-    isTopic: isTopic,
+    rlpEncode: rlpEncode,
+    rlphash: rlphash
 };
