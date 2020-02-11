@@ -1,4 +1,4 @@
-## joinchain-js package
+# joinchain-js package
 
 joinchain-js accounts interface
 本项目是为 Joinchain 区块链提供客户端支持的 js 接口，通过本项目可以接入 Joinchain 区块链，实现区块链的使用。
