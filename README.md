@@ -9,6 +9,7 @@ Joinchain-js package list
 1. joinchain.Account        joinchain 账号 
 2. joinchain.HttpProvider   joinchain http提供商接口
 3. joinchain.Keystore       joinchain 离线账号存储
+4. joinchain.RequestManager joinchain http接口
 
 ## INSTALL
 
