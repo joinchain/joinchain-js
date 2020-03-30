@@ -4,27 +4,30 @@ var Joinchain = new joinchain();
 //创建账号
 Joinchain.Account.newAccount();
 
+//定义域的名字
+var name = "user@joinchain.io";
+console.log("域的名字 = " + name + '\n');
 //获取私钥
-var privateKey = Joinchain.Account.getPrivate("true");// true:前面加0x，false不加
-console.log("私钥长度为 = " + privateKey.length + '\n');
-console.log("私钥为 = " + privateKey + '\n');
+// var privateKey = Joinchain.Account.getPrivate("true");// true:前面加0x，false不加
+// console.log("私钥长度为 = " + privateKey.length + '\n');
+// console.log("私钥为 = " + privateKey + '\n');
 
-//获取公钥
-var publicKey = Joinchain.Account.getPublic("true");
-console.log("不压缩公钥长度为 = " + publicKey.length + '\n')
-console.log("不压缩公钥为 = " + publicKey + '\n');
+// //获取公钥
+// var publicKey = Joinchain.Account.getPublic("true"); 
+// console.log("不压缩公钥长度为 = " + publicKey.length + '\n')
+// console.log("不压缩公钥为 = " + publicKey + '\n');
 
-var compressedPublic = Joinchain.Account.toCompressedPublicKey("hex")
-console.log("压缩公钥长度为 = " + compressedPublic.length + '\n')
-console.log("压缩公钥为 = " + compressedPublic + '\n');
+// var compressedPublic = Joinchain.Account.toCompressedPublicKey("hex")
+// console.log("压缩公钥长度为 = " + compressedPublic.length + '\n')
+// console.log("压缩公钥为 = " + compressedPublic + '\n');
 
-//获取地址
-var address = Joinchain.Account.getAddress();
-console.log("地址长度为 = " + address.length + '\n')
-console.log("地址为 = " + address + '\n');
+// //获取地址
+// var address = Joinchain.Account.getAddress();
+// console.log("地址长度为 = " + address.length + '\n')
+// console.log("地址为 = " + address + '\n');
 
 //第三方导入账户
- Joinchain.Account.loadAccount(privateKey);
+ Joinchain.Account.loadAccount("173c4c4e24ab83824f504137a279e7a8046538afdf52466f9b62bb7dfdbc5d82");
 //第三方获取公钥
 var publicKey = Joinchain.Account.getPublic("true");
 console.log("第三方导入公钥长度为 = " + publicKey.length + '\n')

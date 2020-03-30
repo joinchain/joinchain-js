@@ -3,21 +3,31 @@
 var BigNumber = require('bignumber.js');
 var sha3 = require('./sha3.js');
 var utf8 = require('utf8');
-var rlp = require('rlp');
+var rlpEth = require('rlp');
+var rlpBase = require('../rlp/index');
 var createKeccakHash = require('keccak256');
 /**
  * rlp encode
  */
-var rlpEncode = function(data) {
-    return rlp.encode(data);
+var rlpEncode = function(data,type) {
+    if(type == "joinchain_ethereum"){
+        return rlpEth.encode(data);
+    }else{
+        return rlpBase.encode(data);
+    }
 }
 /**
  * Creates SHA-3 hash of the RLP encoded version of the input
  * @param {Buffer|Array|String|Number} a the input data
  * @return {Buffer}
  */
-var rlphash = function (a) {
-    return exports.keccak(rlp.encode(a));
+var rlphash = function (a,type="joinchain.ethereum") {
+    if(type == "joinchain.ethereum"){
+        return exports.keccak(rlpEth.encode(a));
+    }else{
+        return exports.keccak(rlpBase.encode(a));
+    }
+    
 };
 /**
  * Creates Keccak hash of the input
@@ -216,7 +226,7 @@ var fromDecimal = function (value) {
     var number = toBigNumber(value);
     var result = number.toString(16);
     //TODO 未找到原因 number.lessThan is not a function
-    return '0x' + result;
+    return result;
     //return number.lessThan(0) ? '-0x' + result.substr(1) : '0x' + result;
 };
 
@@ -231,7 +241,7 @@ var fromDecimal = function (value) {
  */
 var toHex = function (val) {
     /*jshint maxcomplexity: 8 */
-
+    console.log(val);
     if (isBoolean(val))
         return fromDecimal(+val);
 
@@ -282,7 +292,7 @@ var toBigNumber = function(number) {
  * @return {BigNumber}
  */
 var toTwosComplement = function (number) {
-    var bigNumber = toBigNumber(number).round();
+    var bigNumber = toBigNumber(number);//.round();
     if (bigNumber.lessThan(0)) {
         return new BigNumber("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16).plus(bigNumber).plus(1);
     }

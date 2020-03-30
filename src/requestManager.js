@@ -20,7 +20,7 @@ var RequestManager = function RequestManager(provider) {
  */
 RequestManager.prototype.send = function (method,params) {
     if (!this.provider) {
-        console.error(errors.InvalidProvider());
+        //console.error(errors.InvalidProvider());
         return null;
     }
 
