@@ -6,6 +6,7 @@ var Keystore = require('./keystore')
 var Transation = require('./transaction')
 var RequestManager = require('./requestManager')
 var HttpProvider = require('./http/httpprovider');
+var Contract = require('./contract');
 
 var Joinchain = function Joinchain(provider) {
     var _this = this;
@@ -31,6 +32,11 @@ Joinchain.prototype.setProvider = function (provider) {
 
 Joinchain.prototype.isConnected = function(){
     return (this.currentProvider && this.currentProvider.isConnected());
+};
+//合约
+Joinchain.prototype.contract = function (abi) {
+    var factory = new Contract(this, abi);
+    return factory;
 };
 Joinchain.modules = {
     Account:    Account,
