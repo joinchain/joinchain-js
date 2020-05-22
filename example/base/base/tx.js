@@ -23,7 +23,7 @@ var raxTx = {
     gasLimit:2000000,
     gasPrice:0,
     value:0,
-    input:"111",
+    input:utils.toHex("abcd"),
     deadline:0
 }
 console.log(raxTx)
