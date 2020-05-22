@@ -102,10 +102,13 @@ Transation.prototype.rlpHash = function(data){
             }
         }else{
             if(field.name=="input"){
-                console.log("111" + data[field.name]);
-                console.log(Buffer.from(data[field.name],"hex"));
+                //param[i] = Buffer.from(data[field.name]);  
+                // param[i] = Buffer.from(data[field.name], 'base64').toString('hex');
+                console.log(typeof data[field.name]) 
+                param[i]  = Buffer.from(data[field.name], 'accic').toString('hex');
+            }else {
+                param[i] = Buffer.from(data[field.name],"hex"); 
             }
-            param[i] = Buffer.from(data[field.name],"hex");    
         }
     })
     this.raw = param;
@@ -195,7 +198,9 @@ var inputType = function(mode,input){
                 break;
         }
     } else{
-        inputData = input;
+        
+        inputData = input
+        
     }
     return inputData;
     
